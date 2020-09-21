@@ -1,0 +1,5 @@
+##ignore this file##
+/target/
+/src/test/
+.idea
+.iml

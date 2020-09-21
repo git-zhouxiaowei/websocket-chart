@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图表</title>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body class="container" style="width: 60%">
+<div class="form-group"></br>
+    <h5>实时展示</h5>
+    <div id="main" style="width: 600px;height:400px;"></div>
+</div>
+<div class="form-group">
+    <a href="add.html" target="_blank">跳转新增页面</a>
+</div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    option = {
+        backgroundColor: '#2c343c',
+        title: {
+            text: '人员性别比例',
+            left: 'center',
+            top: 20,
+            textStyle: {
+                color: '#ccc'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        series: [
+            {
+                name: '人员性别比例',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '50%'],
+                data: [
+                    {itemStyle: {normal: {color: '#ae2216'}}},
+                    {itemStyle: {normal: {color: '#1a1eae'}}},
+                    {itemStyle: {normal: {color: '#ae9aa8'}}}
+                ].sort(function (a, b) {
+                    return a.name - b.name;
+                }),
+                roseType: 'radius',
+                label: {
+                    color: 'rgba(255, 255, 255, 0.3)'
+                },
+                labelLine: {
+                    lineStyle: {
+                        color: 'rgba(255, 255, 255, 0.3)'
+                    },
+                    smooth: 0.2,
+                    length: 10,
+                    length2: 20
+                },
+                itemStyle: {
+                    color: '#c23531',
+                    shadowBlur: 200,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                },
+                animationType: 'scale',
+                animationEasing: 'elasticOut',
+                animationDelay: function (idx) {
+                    return Math.random() * 200;
+                }
+            }
+        ]
+    };
+    var urlPrefix = 'ws://localhost:8080/chart/';
+    var ws = null;
+    $(function () {
+        //先ajax获取数据，初始化显示，然后打开长连接实时监听
+        $.get("/chartOfGroup/dkh", function (data) {
+            option.series[0].data[0].name = "女";
+            option.series[0].data[0].value = data.girl;
+            option.series[0].data[1].name = "男";
+            option.series[0].data[1].value = data.boy;
+            option.series[0].data[2].name = "未知";
+            option.series[0].data[2].value = data.unknown;
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        });
+        var url = urlPrefix + "dkh";
+        ws = new WebSocket(url);
+        ws.onopen = function () {
+            console.log("建立连接...");
+        };
+        ws.onmessage = function (event) {
+            console.log("后台数据已更新...");
+            //拿到数据
+            var jsonObject = JSON.parse(event.data);
+            option.series[0].data[0].name = "女";
+            option.series[0].data[0].value = jsonObject.girl;
+            option.series[0].data[1].name = "男";
+            option.series[0].data[1].value = jsonObject.boy;
+            option.series[0].data[2].name = "未知";
+            option.series[0].data[2].value = jsonObject.unknown;
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        };
+    });
+</script>
+</body>
+</html>

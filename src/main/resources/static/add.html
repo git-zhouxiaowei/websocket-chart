@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>人员增加</title>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body class="container" style="width: 60%">
+<div class="form-group"></br>
+    <h5>新增人员</h5>
+    <hr>
+</div>
+<div class="form-group">
+    <label for="userName">姓名<span style="color: red">*</span> &nbsp;</label>
+    <input id="userName" value="" class="form-control" required/></br>
+</div>
+<div class="form-group">
+    <label>性别<span style="color: red">*</span>&nbsp;&nbsp;&nbsp;&nbsp;</label>
+    <p></p>
+    <label class="radio-inline">
+        <input type="radio" name="sex" checked value="0"> 女
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="sex" value="1"> 男
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="sex" value="2"> 未知
+    </label>
+</div>
+<div class="form-group">
+    <label for="groupNum">组名<span style="color: red">*</span>&nbsp;</label>
+    <input id="groupNum" value="dkh" readonly="readonly" class="form-control" required placeholder="默认dkh"/></br>
+</div>
+<div class="form-group">
+    <label for="email">邮箱&nbsp;</label>
+    <input id="email" value="" class="form-control"/></br>
+</div>
+<div class="form-group">
+    <button id="save" class="btn btn-success">保存</button>
+    <button id="clear" class="btn btn-danger">重置</button>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //刷新页面
+        $('#clear').click(function () {
+            location.reload();
+        });
+        $('#save').click(function () {
+            var userName = $('#userName').val();
+            var sex = $('input[name="sex"]').val();
+            var groupNum = $('#groupNum').val();
+            var email = $('#email').val();
+            if ('' == userName) {
+                alert("姓名不能为空");
+                return;
+            }
+            if ('' == groupNum) {
+                alert("组名不能为空");
+                return;
+            }
+            $.post('/add', {userName: userName, sex: sex, groupNum: groupNum, email: email}, function (data) {
+                console.log(data);
+                alert('新增成功！观察统计图实时变化');
+            });
+        });
+    });
+</script>
+</body>
+</html>
