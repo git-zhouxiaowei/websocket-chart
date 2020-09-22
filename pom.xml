@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.zxw</groupId>
-	<artifactId>spring-boot-chart</artifactId>
+	<artifactId>websocket-chart</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>spring-boot-chart</name>
-	<description>Demo project for Spring Boot</description>
+	<description>WebSocket Demo for chart</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
