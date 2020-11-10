@@ -9,11 +9,19 @@
 </head>
 <body class="container" style="width: 60%">
 <div class="form-group"></br>
-    <h5>实时展示</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <h5>实时展示</h5>
+        </div>
+        <div class="col-md-6">
+            <input type="button" class="btn-danger" id="stopMsg" value="断开实时">
+        </div>
+    </div>
     <div id="main" style="width: 600px;height:400px;"></div>
 </div>
 <div class="form-group">
     <a href="add.html" target="_blank">跳转新增页面</a>
+
 </div>
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
@@ -71,7 +79,7 @@
             }
         ]
     };
-    var urlPrefix = 'ws://localhost:8080/chart/';
+    var urlPrefix = 'ws://192.168.21.20:8080/chart/';
     var ws = null;
     $(function () {
         //先ajax获取数据，初始化显示，然后打开长连接实时监听
@@ -102,7 +110,19 @@
             option.series[0].data[2].value = jsonObject.unknown;
             // 使用刚指定的配置项和数据显示图表。
             myChart.setOption(option);
-        };
+        }
+        ws.onclose = function () {
+            console.log("关闭 websocket 连接...");
+        }
+
+        $('#stopMsg').click(function () {
+            var tip = '确认断开实时图表显示吗？如果想重新实时监控，请刷新页面。';
+            if (confirm(tip)) {
+                ws.close();
+                $(this).attr('disabled','disabled');
+                $(this).attr('class','btn-default');
+            }
+        });
     });
 </script>
 </body>

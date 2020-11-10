@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +21,7 @@ public final class WebSocketUtils {
     /**
      * @Description 存储 websocket session
      */
-    public static final Map<String, Session> ONLINE_USER_SESSIONS = new ConcurrentHashMap<>();
+    public static final Map<String, List<Session>> ONLINE_USER_SESSIONS = new ConcurrentHashMap<>();
 
     /**
      * @Author Zhouxw
@@ -45,8 +46,12 @@ public final class WebSocketUtils {
     }
 
     public static void sendMessage(String key, String message) {
-        Session session = ONLINE_USER_SESSIONS.get(key);
-        sendMessage(session, message);
+        List<Session> list = ONLINE_USER_SESSIONS.get(key);
+        list.stream().forEach(se -> {
+            if(se.isOpen()){
+                sendMessage(se, message);
+            }
+        });
     }
 
 }

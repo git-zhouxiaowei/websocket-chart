@@ -19,7 +19,7 @@
     <label>性别<span style="color: red">*</span>&nbsp;&nbsp;&nbsp;&nbsp;</label>
     <p></p>
     <label class="radio-inline">
-        <input type="radio" name="sex" checked value="0"> 女
+        <input type="radio" name="sex" value="0"> 女
     </label>
     <label class="radio-inline">
         <input type="radio" name="sex" value="1"> 男
@@ -49,7 +49,7 @@
         });
         $('#save').click(function () {
             var userName = $('#userName').val();
-            var sex = $('input[name="sex"]').val();
+            var sex = $("input[name='sex']:checked").val();
             var groupNum = $('#groupNum').val();
             var email = $('#email').val();
             if ('' == userName) {

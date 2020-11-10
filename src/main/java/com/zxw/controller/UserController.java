@@ -11,6 +11,8 @@ import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +29,42 @@ public class UserController {
 
     @OnOpen
     public void openSession(@PathParam("groupNum") String groupNum, Session session) {
-        WebSocketUtils.ONLINE_USER_SESSIONS.put(groupNum, session);
-        //拼装数据DTO通知前端
-        ChartDTO chartDTO = new ChartDTO();
-        WebSocketUtils.sendMessage(groupNum, JSON.toJSONString(chartDTO));
+        List<Session> list = WebSocketUtils.ONLINE_USER_SESSIONS.get(groupNum);
+        if (null == list) {
+            list = new ArrayList<>();
+        }
+
+        if (!list.contains(session)) {
+            list.add(session);
+        }
+        WebSocketUtils.ONLINE_USER_SESSIONS.put(groupNum, list);
+    }
+
+    @OnMessage
+    public void onMessage(@PathParam("groupNum") String groupNum, String message) {
+        System.out.println(groupNum + "客户端ws.send发送的消息：" + message);
+    }
+
+    @OnClose
+    public void onClose(@PathParam("groupNum") String groupNum, Session session) {
+        //当前的Session 移除
+        List<Session> list = WebSocketUtils.ONLINE_USER_SESSIONS.get(groupNum);
+        list.remove(session);
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        try {
+            session.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Throwable msg " + throwable.getMessage());
     }
 
     @GetMapping("list")
